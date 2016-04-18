@@ -1,6 +1,7 @@
 'use strict';
 
 import React, {
+  Dimensions,
   Image,
   PropTypes,
   Text,
