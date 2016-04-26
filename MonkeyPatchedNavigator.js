@@ -2,12 +2,13 @@ import React from 'react';
 import {
   Dimensions,
   Navigator,
+  NativeModules,
 } from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
-var AnimationsDebugModule = require('NativeModules').AnimationsDebugModule;
+var AnimationsDebugModule = NativeModules.AnimationsDebugModule;
 var invariant = require('fbjs/lib/invariant');
 
 class MonkeyPatchedNavigator extends Navigator {
