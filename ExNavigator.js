@@ -8,71 +8,7 @@ import React, {
   View,
 } from 'react-native';
 
-class Navigator extends React.Navigator {
-
-  constructor(props) {
-    super(props);
-    const SCREEN_WIDTH = Dimensions.get('window').width;
-    const SCREEN_HEIGHT = Dimensions.get('window').height;
-    this._matchGestureAction = (eligibleGestures, gestures, gestureState) => {
-      if (!gestures || !eligibleGestures || !eligibleGestures.some) {
-        return null;
-      }
-      var matchedGesture = null;
-      eligibleGestures.some((gestureName, gestureIndex) => {
-        var gesture = gestures[gestureName];
-        if (!gesture) {
-          return;
-        }
-        if (gesture.overswipe == null && this._doesGestureOverswipe(gestureName)) {
-          // cannot swipe past first or last scene without overswiping
-          return false;
-        }
-        var isTravelVertical = gesture.direction === 'top-to-bottom' || gesture.direction === 'bottom-to-top';
-        var isTravelInverted = gesture.direction === 'right-to-left' || gesture.direction === 'bottom-to-top';
-
-        // FIXME: village specific changes
-        var currentLoc;
-        if (gestureState.x0 === 0 && gestureState.y0 === 0) {
-          currentLoc = isTravelVertical ? gestureState.moveY : gestureState.moveX;
-        } else {
-          currentLoc = isTravelVertical ? gestureState.y0 : gestureState.x0;
-        }
-        // FIXME: village specific changes
-
-        var travelDist = isTravelVertical ? gestureState.dy : gestureState.dx;
-        var oppositeAxisTravelDist =
-          isTravelVertical ? gestureState.dx : gestureState.dy;
-        var edgeHitWidth = gesture.edgeHitWidth;
-        if (isTravelInverted) {
-          currentLoc = -currentLoc;
-          travelDist = -travelDist;
-          oppositeAxisTravelDist = -oppositeAxisTravelDist;
-          edgeHitWidth = isTravelVertical ?
-            -(SCREEN_HEIGHT - edgeHitWidth) :
-            -(SCREEN_WIDTH - edgeHitWidth);
-        }
-        var moveStartedInRegion = gesture.edgeHitWidth == null ||
-          currentLoc < edgeHitWidth;
-        if (!moveStartedInRegion) {
-          return false;
-        }
-        var moveTravelledFarEnough = travelDist >= gesture.gestureDetectMovement;
-        if (!moveTravelledFarEnough) {
-          return false;
-        }
-        var directionIsCorrect = Math.abs(travelDist) > Math.abs(oppositeAxisTravelDist) * gesture.directionRatio;
-        if (directionIsCorrect) {
-          matchedGesture = gestureName;
-          return true;
-        } else {
-          this._eligibleGestures = this._eligibleGestures.slice().splice(gestureIndex, 1);
-        }
-      });
-      return matchedGesture || null;
-    };
-  }
-}
+const Navigator = require('./MonkeyPatchedNavigator');
 
 import invariant from 'invariant';
 import cloneReferencedElement from 'react-clone-referenced-element';
